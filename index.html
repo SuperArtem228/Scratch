@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Золотой скретч-билет</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    color: #fff;
+    -webkit-user-select: none;
+    user-select: none;
+    touch-action: none;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 420px;
+    padding: 20px;
+    text-align: center;
+    position: relative;
+  }
+
+  /* ---- HEADER ---- */
+  .header { margin-bottom: 24px; transition: opacity 0.4s; }
+  .header h1 {
+    font-size: 26px;
+    font-weight: 900;
+    background: linear-gradient(90deg, #ffd700, #ffec80, #ffd700);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 6px;
+  }
+  .header p {
+    font-size: 14px;
+    color: rgba(255,255,255,0.65);
+    font-weight: 600;
+  }
+
+  /* ---- PROGRESS ---- */
+  .progress {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+  .progress-dot {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 800;
+    transition: all 0.4s ease;
+    border: 3px solid rgba(255,215,0,0.3);
+    color: rgba(255,255,255,0.4);
+    background: rgba(255,255,255,0.05);
+  }
+  .progress-dot.active {
+    border-color: #ffd700;
+    color: #ffd700;
+    background: rgba(255,215,0,0.15);
+    box-shadow: 0 0 20px rgba(255,215,0,0.3);
+    transform: scale(1.15);
+  }
+  .progress-dot.done {
+    border-color: rgba(255,215,0,0.5);
+    color: rgba(255,215,0,0.5);
+    background: rgba(255,215,0,0.1);
+  }
+
+  /* ---- TICKET ---- */
+  .ticket-wrapper {
+    position: relative;
+    width: 320px;
+    height: 220px;
+    margin: 0 auto 20px;
+    perspective: 600px;
+  }
+  .ticket {
+    position: absolute;
+    inset: 0;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow:
+      0 0 0 4px #ffd700,
+      0 0 0 6px rgba(255,215,0,0.3),
+      0 8px 32px rgba(0,0,0,0.4),
+      0 0 60px rgba(255,215,0,0.15);
+    transition: transform 0.5s ease, opacity 0.5s ease;
+  }
+  .ticket.entering {
+    transform: translateX(80px) scale(0.9);
+    opacity: 0;
+  }
+  .ticket.exiting {
+    transform: translateX(-80px) scale(0.9);
+    opacity: 0;
+  }
+
+  /* Under layer — the reveal content */
+  .ticket-under {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(145deg, #fff9e6 0%, #fff3cc 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .ticket-under .result-main {
+    font-size: 42px;
+    font-weight: 900;
+    color: #b8860b;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    line-height: 1.1;
+  }
+  .ticket-under .result-main.win {
+    font-size: 56px;
+    background: linear-gradient(135deg, #ff6b00, #ff9500, #ffd700);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .ticket-under .result-sub {
+    font-size: 15px;
+    color: #8b7355;
+    margin-top: 8px;
+    font-weight: 700;
+  }
+  .ticket-under .result-emoji {
+    font-size: 36px;
+    margin-bottom: 8px;
+  }
+
+  /* Canvas scratch layer */
+  .scratch-canvas {
+    position: absolute;
+    inset: 0;
+    border-radius: 20px;
+    cursor: pointer;
+    touch-action: none;
+  }
+
+  /* ---- TICKET LABEL ---- */
+  .ticket-label {
+    font-size: 13px;
+    color: rgba(255,255,255,0.5);
+    font-weight: 700;
+    margin-bottom: 12px;
+    min-height: 20px;
+    transition: opacity 0.3s;
+  }
+
+  /* ---- CTA HINT ---- */
+  .hint {
+    font-size: 13px;
+    color: rgba(255,255,255,0.4);
+    margin-top: 16px;
+    min-height: 20px;
+    transition: opacity 0.3s;
+  }
+
+  /* ---- FINAL SCREEN ---- */
+  .final-screen {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.6s ease;
+  }
+  .final-screen.visible {
+    opacity: 1;
+    pointer-events: all;
+  }
+  .final-content {
+    text-align: center;
+    padding: 40px 20px;
+    transform: translateY(30px);
+    transition: transform 0.6s ease;
+  }
+  .final-screen.visible .final-content {
+    transform: translateY(0);
+  }
+  .final-content .congrats {
+    font-size: 28px;
+    font-weight: 900;
+    color: #ffd700;
+    margin-bottom: 8px;
+  }
+  .final-content .your-win {
+    font-size: 16px;
+    color: rgba(255,255,255,0.6);
+    font-weight: 700;
+    margin-bottom: 20px;
+  }
+  .final-content .big-value {
+    font-size: 80px;
+    font-weight: 900;
+    background: linear-gradient(135deg, #ffd700, #ff9500, #ff6b00);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .final-content .deposit-text {
+    font-size: 18px;
+    font-weight: 800;
+    color: rgba(255,255,255,0.7);
+    letter-spacing: 2px;
+    margin-bottom: 36px;
+  }
+  .cta-btn {
+    display: inline-block;
+    padding: 18px 60px;
+    background: linear-gradient(135deg, #ffd700, #ffb300);
+    color: #1a1a2e;
+    font-family: 'Nunito', sans-serif;
+    font-size: 18px;
+    font-weight: 900;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    box-shadow: 0 4px 20px rgba(255,215,0,0.4), 0 0 40px rgba(255,215,0,0.2);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .cta-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 30px rgba(255,215,0,0.5), 0 0 60px rgba(255,215,0,0.3);
+  }
+  .cta-btn:active { transform: scale(0.98); }
+
+  /* ---- CONFETTI ---- */
+  .confetti-container {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 101;
+    overflow: hidden;
+  }
+  .confetti-piece {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    top: -20px;
+    opacity: 0;
+  }
+
+  /* ---- SPARKLE PARTICLES on ticket ---- */
+  .sparkle {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: #ffd700;
+    border-radius: 50%;
+    pointer-events: none;
+    opacity: 0;
+    animation: sparkle-float 1.5s ease-out forwards;
+  }
+  @keyframes sparkle-float {
+    0% { opacity: 1; transform: translateY(0) scale(1); }
+    100% { opacity: 0; transform: translateY(-40px) scale(0); }
+  }
+
+  /* ---- INTRO OVERLAY ---- */
+  .intro-overlay {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    transition: opacity 0.6s ease;
+  }
+  .intro-overlay.hidden { opacity: 0; pointer-events: none; }
+  .intro-content { text-align: center; padding: 20px; }
+  .intro-content .gift-icon {
+    font-size: 72px;
+    margin-bottom: 20px;
+    animation: intro-bounce 1s ease infinite alternate;
+  }
+  @keyframes intro-bounce {
+    0% { transform: translateY(0) scale(1); }
+    100% { transform: translateY(-10px) scale(1.05); }
+  }
+  .intro-content h2 {
+    font-size: 24px;
+    font-weight: 900;
+    color: #ffd700;
+    margin-bottom: 10px;
+  }
+  .intro-content p {
+    font-size: 15px;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 28px;
+    line-height: 1.5;
+    font-weight: 600;
+  }
+  .intro-btn {
+    display: inline-block;
+    padding: 16px 48px;
+    background: linear-gradient(135deg, #ffd700, #ffb300);
+    color: #1a1a2e;
+    font-family: 'Nunito', sans-serif;
+    font-size: 16px;
+    font-weight: 900;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 20px rgba(255,215,0,0.4);
+    transition: transform 0.2s;
+  }
+  .intro-btn:hover { transform: scale(1.05); }
+  .intro-btn:active { transform: scale(0.98); }
+</style>
+</head>
+<body>
+
+<!-- INTRO -->
+<div class="intro-overlay" id="intro">
+  <div class="intro-content">
+    <div class="gift-icon">🎁</div>
+    <h2>Специальный подарок!</h2>
+    <p>У вас есть 3 попытки открыть<br>золотой скретч-билет</p>
+    <button class="intro-btn" id="startBtn">НАЧАТЬ</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="container" id="mainContainer" style="opacity:0">
+  <div class="header">
+    <h1 id="headline">У вас 3 попытки</h1>
+    <p id="subtitle">Сотрите защитный слой и откройте результат</p>
+  </div>
+
+  <div class="progress" id="progress">
+    <div class="progress-dot active" data-idx="0">1</div>
+    <div class="progress-dot" data-idx="1">2</div>
+    <div class="progress-dot" data-idx="2">3</div>
+  </div>
+
+  <div class="ticket-label" id="ticketLabel">Попытка 1 из 3</div>
+
+  <div class="ticket-wrapper" id="ticketWrapper">
+    <div class="ticket" id="ticket">
+      <div class="ticket-under" id="ticketUnder"></div>
+      <canvas class="scratch-canvas" id="scratchCanvas"></canvas>
+    </div>
+  </div>
+
+  <div class="hint" id="hint">👆 Проведите пальцем по билету</div>
+</div>
+
+<!-- FINAL -->
+<div class="final-screen" id="finalScreen">
+  <div class="final-content">
+    <div class="congrats">Поздравляем! 🎉</div>
+    <div class="your-win">Твой выигрыш</div>
+    <div class="big-value">150%</div>
+    <div class="deposit-text">НА ПЕРВЫЙ ДЕПОЗИТ</div>
+    <button class="cta-btn" id="ctaBtn">РЕГИСТРАЦИЯ</button>
+  </div>
+</div>
+
+<div class="confetti-container" id="confettiContainer"></div>
+
+<script>
+(function() {
+  'use strict';
+
+  // ---- CONFIG ----
+  const ATTEMPTS = [
+    { main: 'Почти!', sub: 'У вас осталось 2 попытки', emoji: '😊', win: false },
+    { main: 'Ещё чуть-чуть!', sub: 'Последняя попытка', emoji: '🔥', win: false },
+    { main: '150%', sub: '', emoji: '🎉', win: true }
+  ];
+  const SCRATCH_THRESHOLD = 0.50; // 50%
+  const REVEAL_HOLD_MS = 1800;
+  const TRANSITION_MS = 500;
+
+  // ---- STATE ----
+  let currentAttempt = 0;
+  let state = 'preload'; // states per spec
+  let isScratching = false;
+  let scratchedPixels = 0;
+  let totalPixels = 0;
+  let revealed = false;
+
+  // ---- ELEMENTS ----
+  const intro = document.getElementById('intro');
+  const startBtn = document.getElementById('startBtn');
+  const mainContainer = document.getElementById('mainContainer');
+  const headline = document.getElementById('headline');
+  const subtitle = document.getElementById('subtitle');
+  const progress = document.getElementById('progress');
+  const ticketLabel = document.getElementById('ticketLabel');
+  const ticketWrapper = document.getElementById('ticketWrapper');
+  const ticket = document.getElementById('ticket');
+  const ticketUnder = document.getElementById('ticketUnder');
+  const canvas = document.getElementById('scratchCanvas');
+  const hint = document.getElementById('hint');
+  const finalScreen = document.getElementById('finalScreen');
+  const confettiContainer = document.getElementById('confettiContainer');
+
+  const ctx = canvas.getContext('2d', { willReadFrequently: true });
+
+  // ---- INIT ----
+  function init() {
+    state = 'intro';
+    startBtn.addEventListener('click', onStart);
+  }
+
+  function onStart() {
+    state = 'ready_attempt_1';
+    intro.classList.add('hidden');
+    setTimeout(() => {
+      mainContainer.style.opacity = '1';
+      mainContainer.style.transition = 'opacity 0.5s ease';
+      setupAttempt(0);
+    }, 300);
+  }
+
+  // ---- SETUP ATTEMPT ----
+  function setupAttempt(idx) {
+    currentAttempt = idx;
+    revealed = false;
+    scratchedPixels = 0;
+    state = `ready_attempt_${idx + 1}`;
+
+    // Update progress dots
+    const dots = progress.querySelectorAll('.progress-dot');
+    dots.forEach((dot, i) => {
+      dot.classList.remove('active', 'done');
+      if (i < idx) dot.classList.add('done');
+      if (i === idx) dot.classList.add('active');
+    });
+
+    // Update label
+    ticketLabel.textContent = `Попытка ${idx + 1} из 3`;
+    hint.textContent = '👆 Проведите пальцем по билету';
+    hint.style.opacity = '1';
+
+    // Set under content
+    const attempt = ATTEMPTS[idx];
+    ticketUnder.innerHTML = `
+      <div class="result-emoji">${attempt.emoji}</div>
+      <div class="result-main ${attempt.win ? 'win' : ''}">${attempt.main}</div>
+      ${attempt.sub ? `<div class="result-sub">${attempt.sub}</div>` : ''}
+    `;
+
+    // Animate ticket in
+    ticket.classList.remove('exiting');
+    ticket.classList.add('entering');
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        ticket.classList.remove('entering');
+      });
+    });
+
+    // Setup canvas
+    setupCanvas();
+  }
+
+  // ---- CANVAS ----
+  function setupCanvas() {
+    const rect = ticketWrapper.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    canvas.style.width = rect.width + 'px';
+    canvas.style.height = rect.height + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    // Draw gold scratch layer
+    drawGoldLayer(rect.width, rect.height);
+    totalPixels = canvas.width * canvas.height;
+
+    // Bind events
+    canvas.onpointerdown = onPointerDown;
+    canvas.onpointermove = onPointerMove;
+    canvas.onpointerup = onPointerUp;
+    canvas.onpointerleave = onPointerUp;
+  }
+
+  function drawGoldLayer(w, h) {
+    // Gold gradient base
+    const grad = ctx.createLinearGradient(0, 0, w, h);
+    grad.addColorStop(0, '#ffd700');
+    grad.addColorStop(0.3, '#ffec80');
+    grad.addColorStop(0.5, '#ffd700');
+    grad.addColorStop(0.7, '#daa520');
+    grad.addColorStop(1, '#ffd700');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, w, h);
+
+    // Subtle sparkle dots
+    for (let i = 0; i < 30; i++) {
+      const x = Math.random() * w;
+      const y = Math.random() * h;
+      const r = Math.random() * 3 + 1;
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255, 255, 255, ${Math.random() * 0.5 + 0.2})`;
+      ctx.fill();
+    }
+
+    // Stars pattern
+    ctx.fillStyle = 'rgba(255,255,255,0.15)';
+    ctx.font = '24px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('⭐', w * 0.2, h * 0.3);
+    ctx.fillText('⭐', w * 0.8, h * 0.3);
+    ctx.fillText('⭐', w * 0.5, h * 0.7);
+
+    // Center text
+    ctx.fillStyle = 'rgba(139, 101, 8, 0.6)';
+    ctx.font = 'bold 18px Nunito, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('СОТРИТЕ ЗДЕСЬ', w / 2, h / 2 - 10);
+
+    ctx.font = '13px Nunito, sans-serif';
+    ctx.fillStyle = 'rgba(139, 101, 8, 0.4)';
+    ctx.fillText('проведите пальцем', w / 2, h / 2 + 14);
+  }
+
+  // ---- SCRATCH LOGIC ----
+  function getPos(e) {
+    const rect = canvas.getBoundingClientRect();
+    return {
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top
+    };
+  }
+
+  function onPointerDown(e) {
+    if (revealed) return;
+    e.preventDefault();
+    canvas.setPointerCapture(e.pointerId);
+    isScratching = true;
+    state = `scratching_${currentAttempt + 1}`;
+    hint.style.opacity = '0';
+    scratch(getPos(e));
+  }
+
+  function onPointerMove(e) {
+    if (!isScratching || revealed) return;
+    e.preventDefault();
+    scratch(getPos(e));
+  }
+
+  function onPointerUp(e) {
+    if (!isScratching) return;
+    isScratching = false;
+  }
+
+  function scratch(pos) {
+    const radius = 28;
+    ctx.globalCompositeOperation = 'destination-out';
+    ctx.beginPath();
+    ctx.arc(pos.x, pos.y, radius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.globalCompositeOperation = 'source-over';
+
+    // Spawn sparkle particle
+    if (Math.random() > 0.6) spawnSparkle(pos);
+
+    checkProgress();
+  }
+
+  function checkProgress() {
+    if (revealed) return;
+    // Sample pixels to estimate scratch progress
+    const dpr = window.devicePixelRatio || 1;
+    const w = canvas.width;
+    const h = canvas.height;
+    const sampleSize = 40;
+    let transparent = 0;
+    const total = sampleSize * sampleSize;
+
+    const imageData = ctx.getImageData(0, 0, w, h);
+    const data = imageData.data;
+    const stepX = Math.floor(w / sampleSize);
+    const stepY = Math.floor(h / sampleSize);
+
+    for (let i = 0; i < sampleSize; i++) {
+      for (let j = 0; j < sampleSize; j++) {
+        const px = i * stepX;
+        const py = j * stepY;
+        const idx = (py * w + px) * 4;
+        if (data[idx + 3] < 128) transparent++;
+      }
+    }
+
+    const ratio = transparent / total;
+    if (ratio >= SCRATCH_THRESHOLD) {
+      revealResult();
+    }
+  }
+
+  // ---- REVEAL ----
+  function revealResult() {
+    if (revealed) return;
+    revealed = true;
+    isScratching = false;
+    state = `reveal_${currentAttempt + 1}`;
+
+    // Animate clear remaining scratch layer
+    animateClear();
+  }
+
+  function animateClear() {
+    const rect = ticketWrapper.getBoundingClientRect();
+    const w = rect.width;
+    const h = rect.height;
+    let progress = 0;
+
+    function step() {
+      progress += 0.08;
+      if (progress >= 1) {
+        ctx.clearRect(0, 0, w, h);
+        canvas.style.pointerEvents = 'none';
+        onRevealComplete();
+        return;
+      }
+      // Expand clear from center
+      ctx.globalCompositeOperation = 'destination-out';
+      ctx.beginPath();
+      const cx = w / 2;
+      const cy = h / 2;
+      const maxR = Math.sqrt(cx * cx + cy * cy);
+      ctx.arc(cx, cy, maxR * progress, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.globalCompositeOperation = 'source-over';
+      requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  function onRevealComplete() {
+    const attempt = ATTEMPTS[currentAttempt];
+
+    if (attempt.win) {
+      // Small win flash then go to final
+      setTimeout(() => {
+        state = 'final_offer_reveal';
+        showFinalScreen();
+      }, REVEAL_HOLD_MS);
+    } else {
+      // Hold then next attempt
+      setTimeout(() => {
+        ticket.classList.add('exiting');
+        setTimeout(() => {
+          canvas.style.pointerEvents = 'auto';
+          setupAttempt(currentAttempt + 1);
+        }, TRANSITION_MS);
+      }, REVEAL_HOLD_MS);
+    }
+  }
+
+  // ---- FINAL SCREEN ----
+  function showFinalScreen() {
+    finalScreen.classList.add('visible');
+    state = 'final_offer_hold';
+    launchConfetti();
+
+    document.getElementById('ctaBtn').addEventListener('click', () => {
+      alert('Переход к регистрации');
+    });
+  }
+
+  // ---- CONFETTI ----
+  function launchConfetti() {
+    const colors = ['#ffd700', '#ff6b00', '#ff9500', '#fff', '#ff4444', '#44ff44', '#4488ff'];
+    for (let i = 0; i < 60; i++) {
+      const el = document.createElement('div');
+      el.className = 'confetti-piece';
+      el.style.left = Math.random() * 100 + '%';
+      el.style.background = colors[Math.floor(Math.random() * colors.length)];
+      el.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+      el.style.width = (Math.random() * 8 + 6) + 'px';
+      el.style.height = (Math.random() * 8 + 6) + 'px';
+
+      const duration = Math.random() * 2 + 2;
+      const delay = Math.random() * 0.8;
+      const xDrift = (Math.random() - 0.5) * 200;
+      el.style.animation = `confetti-fall ${duration}s ${delay}s ease-out forwards`;
+      el.style.setProperty('--x-drift', xDrift + 'px');
+
+      confettiContainer.appendChild(el);
+    }
+
+    // Add keyframes dynamically
+    if (!document.getElementById('confettiStyle')) {
+      const style = document.createElement('style');
+      style.id = 'confettiStyle';
+      style.textContent = `
+        @keyframes confetti-fall {
+          0% { opacity: 1; transform: translateY(0) translateX(0) rotate(0deg); }
+          100% { opacity: 0; transform: translateY(100vh) translateX(var(--x-drift)) rotate(720deg); }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+  }
+
+  // ---- SPARKLE PARTICLES ----
+  function spawnSparkle(pos) {
+    const el = document.createElement('div');
+    el.className = 'sparkle';
+    const rect = ticketWrapper.getBoundingClientRect();
+    el.style.left = (rect.left + pos.x + (Math.random() - 0.5) * 20) + 'px';
+    el.style.top = (rect.top + pos.y + (Math.random() - 0.5) * 20) + 'px';
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 1500);
+  }
+
+  // ---- GO ----
+  init();
+})();
+</script>
+</body>
+</html>
