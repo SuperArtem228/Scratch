@@ -152,21 +152,21 @@
   /* ---- 3x3 GRID ---- */
   .cell-grid {
     position: absolute;
-    /* Percentages from layout JSON: x=120/515, y=39/293, w=248/515, h=170/293 */
-    left: 23.3%;
-    top: 13.3%;
-    width: 48.16%;
-    height: 58.02%;
+    /* Measured from ticket_grid_guide.png: grid starts after left stub */
+    left: 29.1%;
+    top: 9.6%;
+    width: 66.4%;
+    height: 81.2%;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
-    gap: 3.5%;
+    gap: 2.3%;
   }
 
   /* ---- INDIVIDUAL CELL ---- */
   .cell {
     position: relative;
-    border-radius: 8%;
+    border-radius: 10%;
     overflow: hidden;
     cursor: pointer;
     touch-action: none;
@@ -214,7 +214,7 @@
     position: absolute;
     inset: 0;
     z-index: 5;
-    border-radius: 8%;
+    border-radius: 10%;
     touch-action: none;
   }
 
