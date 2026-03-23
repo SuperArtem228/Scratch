@@ -152,15 +152,15 @@
   /* ---- 3x3 GRID ---- */
   .cell-grid {
     position: absolute;
-    /* Measured from ticket_grid_guide.png: compact grid within gold frame */
-    left: 20.4%;
-    top: 11.6%;
-    width: 60.2%;
-    height: 76.8%;
+    /* Grid area shifted right to account for left stub on ticket */
+    left: 23%;
+    top: 8%;
+    width: 70%;
+    height: 84%;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
-    gap: 1.8%;
+    gap: 2%;
   }
 
   /* ---- INDIVIDUAL CELL ---- */
