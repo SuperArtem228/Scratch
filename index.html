@@ -103,7 +103,7 @@
   .ticket-wrapper::before {
     content: '';
     display: block;
-    padding-top: 56.89%; /* 293/515 * 100 */
+    padding-top: 56.95%; /* 377/662 * 100 */
   }
 
   .ticket {
@@ -124,7 +124,7 @@
   .ticket-frame {
     position: absolute;
     inset: 0;
-    background-image: url('flagman_scratch_ticket_assets_pack/ticket_main_frame_3x3.png');
+    background-image: url('ticket_main_frame_3x3.png');
     background-size: 100% 100%;
     background-repeat: no-repeat;
     filter: drop-shadow(0 6px 24px rgba(255,215,0,0.25));
@@ -152,15 +152,15 @@
   /* ---- 3x3 GRID ---- */
   .cell-grid {
     position: absolute;
-    /* Grid area shifted right to account for left stub on ticket */
-    left: 23%;
-    top: 8%;
-    width: 70%;
-    height: 84%;
+    /* Grid positioned right of left stub, inside frame border */
+    left: 18%;
+    top: 7%;
+    width: 76%;
+    height: 86%;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
-    gap: 2%;
+    gap: 2.5%;
   }
 
   /* ---- INDIVIDUAL CELL ---- */
