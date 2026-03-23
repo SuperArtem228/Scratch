@@ -507,29 +507,32 @@
   };
 
   // =============================================
-  // REWARD LOGIC (separate from visuals)
+  // SCENARIO LOGIC — predetermined outcomes
   // =============================================
-  // Each attempt has a 3x3 grid. Cells with reward=true show the reward badge.
-  // Positions of reward cells per attempt (indices 0-8, row-major).
-  // 3 reward cells form the "winning line" the user discovers.
+  // User scratches exactly 3 cells per attempt.
+  // The reward shown depends on the ORDER scratched (1st, 2nd, 3rd),
+  // NOT which cell they pick. This guarantees the scenario.
   const ATTEMPTS = [
     {
-      rewardImg: ASSET.reward5fs,
-      rewardCells: [0, 4, 8], // diagonal
+      // Attempt 1: 5FS, 5FS, 5FS → WIN
+      sequence: [ASSET.reward5fs, ASSET.reward5fs, ASSET.reward5fs],
+      isWin: true,
       resultText: '5 Free Spins!',
       resultSub: 'У вас осталось 2 попытки',
       isFinal: false,
     },
     {
-      rewardImg: ASSET.reward5fs,
-      rewardCells: [1, 4, 7], // vertical middle
-      resultText: '5 Free Spins!',
-      resultSub: 'Последняя попытка',
+      // Attempt 2: 5FS, 5FS, 500FS → LOSE (mismatch)
+      sequence: [ASSET.reward5fs, ASSET.reward5fs, ASSET.reward500fs],
+      isWin: false,
+      resultText: 'Не совпало...',
+      resultSub: 'Последняя попытка!',
       isFinal: false,
     },
     {
-      rewardImg: ASSET.reward500fs,
-      rewardCells: [0, 1, 2, 3, 4, 5, 6, 7, 8], // all cells are reward
+      // Attempt 3: 500FS, 500FS, 500FS → BIG WIN
+      sequence: [ASSET.reward500fs, ASSET.reward500fs, ASSET.reward500fs],
+      isWin: true,
       resultText: 'До 500 Free Spins!',
       resultSub: '',
       isFinal: true,
@@ -540,7 +543,7 @@
   // CONFIG
   // =============================================
   const CELL_SCRATCH_THRESHOLD = 0.50;
-  const CELLS_TO_AUTO_REVEAL = 3;   // after N reward cells revealed, auto-complete
+  const MAX_SCRATCHES = 3;          // exactly 3 scratches per attempt
   const REVEAL_HOLD_MS = 2000;
   const TRANSITION_MS = 500;
 
@@ -552,7 +555,7 @@
   let cellStates = [];     // per cell: 'idle' | 'scratching' | 'revealed'
   let cellCanvases = [];   // per cell canvas refs
   let cellCtxs = [];       // per cell 2d contexts
-  let revealedRewardCount = 0;
+  let scratchOrder = [];   // tracks which cells were scratched, in order
   let ticketRevealed = false;
   let scratchOverlayImg = null;
 
@@ -618,7 +621,7 @@
   function setupAttempt(idx) {
     currentAttempt = idx;
     ticketRevealed = false;
-    revealedRewardCount = 0;
+    scratchOrder = [];
     cellStates = Array(9).fill('idle');
     cellCanvases = [];
     cellCtxs = [];
@@ -657,7 +660,6 @@
   // =============================================
   function buildGrid(attemptIdx) {
     cellGrid.innerHTML = '';
-    const attempt = ATTEMPTS[attemptIdx];
 
     for (let i = 0; i < 9; i++) {
       const cell = document.createElement('div');
@@ -677,14 +679,10 @@
       bgRevealed.className = 'cell-bg cell-bg-revealed';
       cell.appendChild(bgRevealed);
 
-      // Reward image (visible only after reveal)
-      const isReward = attempt.rewardCells.includes(i);
-      if (isReward) {
-        const rewardEl = document.createElement('div');
-        rewardEl.className = 'cell-reward';
-        rewardEl.style.backgroundImage = `url('${attempt.rewardImg}')`;
-        cell.appendChild(rewardEl);
-      }
+      // Reward placeholder — image set dynamically on reveal
+      const rewardEl = document.createElement('div');
+      rewardEl.className = 'cell-reward';
+      cell.appendChild(rewardEl);
 
       // Scratch canvas overlay
       const canvas = document.createElement('canvas');
@@ -728,6 +726,7 @@
     let isDown = false;
     canvas.addEventListener('pointerdown', (e) => {
       if (ticketRevealed || cellStates[idx] === 'revealed') return;
+      if (scratchOrder.length >= MAX_SCRATCHES) return; // no more scratches
       e.preventDefault();
       canvas.setPointerCapture(e.pointerId);
       isDown = true;
@@ -738,6 +737,7 @@
     });
     canvas.addEventListener('pointermove', (e) => {
       if (!isDown || ticketRevealed || cellStates[idx] === 'revealed') return;
+      if (scratchOrder.length >= MAX_SCRATCHES) return;
       e.preventDefault();
       scratchCell(idx, e);
     });
@@ -810,58 +810,37 @@
   // =============================================
   function revealCell(idx) {
     if (cellStates[idx] === 'revealed') return;
+    if (scratchOrder.length >= MAX_SCRATCHES) return;
+
     cellStates[idx] = 'revealed';
+    const orderIdx = scratchOrder.length; // 0, 1, or 2
+    scratchOrder.push(idx);
+
+    const attempt = ATTEMPTS[currentAttempt];
+    const rewardImg = attempt.sequence[orderIdx];
 
     const cell = cellGrid.children[idx];
+    // Set the reward image dynamically based on scratch order
+    const rewardEl = cell.querySelector('.cell-reward');
+    rewardEl.style.backgroundImage = `url('${rewardImg}')`;
     cell.classList.add('state-revealed');
 
-    // Check if this was a reward cell
-    const attempt = ATTEMPTS[currentAttempt];
-    if (attempt.rewardCells.includes(idx)) {
-      revealedRewardCount++;
+    // After 3 scratches, show result
+    if (scratchOrder.length >= MAX_SCRATCHES) {
+      setTimeout(() => showAttemptResult(), 600);
     }
-
-    // Check if enough reward cells opened to auto-complete
-    const neededRewards = Math.min(CELLS_TO_AUTO_REVEAL, attempt.rewardCells.length);
-    if (revealedRewardCount >= neededRewards && !ticketRevealed) {
-      autoCompleteTicket();
-    }
-  }
-
-  // =============================================
-  // AUTO-COMPLETE TICKET
-  // =============================================
-  function autoCompleteTicket() {
-    if (ticketRevealed) return;
-    ticketRevealed = true;
-    state = `reveal_${currentAttempt + 1}`;
-
-    // Reveal all remaining cells with stagger
-    const unrevealed = [];
-    for (let i = 0; i < 9; i++) {
-      if (cellStates[i] !== 'revealed') unrevealed.push(i);
-    }
-
-    unrevealed.forEach((idx, order) => {
-      setTimeout(() => {
-        cellStates[idx] = 'revealed';
-        const cell = cellGrid.children[idx];
-        cell.classList.add('state-revealed');
-      }, order * 120);
-    });
-
-    // After stagger animation, show result
-    const staggerDone = unrevealed.length * 120 + 300;
-    setTimeout(() => showAttemptResult(), staggerDone);
   }
 
   // =============================================
   // SHOW ATTEMPT RESULT
   // =============================================
   function showAttemptResult() {
+    ticketRevealed = true;
+    state = `reveal_${currentAttempt + 1}`;
     const attempt = ATTEMPTS[currentAttempt];
 
-    attemptResultImg.src = attempt.rewardImg;
+    // Show the last reward from the sequence as the result image
+    attemptResultImg.src = attempt.sequence[attempt.sequence.length - 1];
     attemptResultText.textContent = attempt.resultText;
     attemptResultSub.textContent = attempt.resultSub;
     attemptResult.classList.add('visible');
