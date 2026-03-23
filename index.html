@@ -152,15 +152,15 @@
   /* ---- 3x3 GRID ---- */
   .cell-grid {
     position: absolute;
-    /* Measured from ticket_grid_guide.png: grid starts after left stub */
-    left: 29.1%;
-    top: 9.6%;
-    width: 66.4%;
-    height: 81.2%;
+    /* Measured from ticket_grid_guide.png: compact grid within gold frame */
+    left: 20.4%;
+    top: 11.6%;
+    width: 60.2%;
+    height: 76.8%;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
-    gap: 2.3%;
+    gap: 1.8%;
   }
 
   /* ---- INDIVIDUAL CELL ---- */
@@ -195,11 +195,12 @@
   /* Reward image inside cell (hidden until reveal) */
   .cell-reward {
     position: absolute;
-    /* contentSafe approximation: inset ~12% from each edge */
-    left: 12%;
-    top: 10%;
-    width: 76%;
-    height: 80%;
+    /* contentSafe: fit reward badges snugly inside cell */
+    left: 50%;
+    top: 50%;
+    width: 70%;
+    height: 70%;
+    transform: translate(-50%, -50%);
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
