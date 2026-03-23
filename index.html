@@ -20,31 +20,30 @@
     color: #fff;
     -webkit-user-select: none;
     user-select: none;
-    touch-action: none;
   }
 
   .container {
     width: 100%;
-    max-width: 420px;
-    padding: 20px;
+    max-width: 480px;
+    padding: 16px;
     text-align: center;
     position: relative;
   }
 
   /* ---- HEADER ---- */
-  .header { margin-bottom: 24px; transition: opacity 0.4s; }
+  .header { margin-bottom: 18px; transition: opacity 0.4s; }
   .header h1 {
-    font-size: 26px;
+    font-size: 24px;
     font-weight: 900;
     background: linear-gradient(90deg, #ffd700, #ffec80, #ffd700);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
   }
   .header p {
-    font-size: 14px;
-    color: rgba(255,255,255,0.65);
+    font-size: 13px;
+    color: rgba(255,255,255,0.6);
     font-weight: 600;
   }
 
@@ -53,16 +52,16 @@
     display: flex;
     justify-content: center;
     gap: 12px;
-    margin-bottom: 28px;
+    margin-bottom: 18px;
   }
   .progress-dot {
-    width: 40px;
-    height: 40px;
+    width: 38px;
+    height: 38px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 800;
     transition: all 0.4s ease;
     border: 3px solid rgba(255,215,0,0.3);
@@ -82,97 +81,193 @@
     background: rgba(255,215,0,0.1);
   }
 
-  /* ---- TICKET ---- */
-  .ticket-wrapper {
-    position: relative;
-    width: 320px;
-    height: 220px;
-    margin: 0 auto 20px;
-    perspective: 600px;
-  }
-  .ticket {
-    position: absolute;
-    inset: 0;
-    border-radius: 20px;
-    overflow: hidden;
-    box-shadow:
-      0 0 0 4px #ffd700,
-      0 0 0 6px rgba(255,215,0,0.3),
-      0 8px 32px rgba(0,0,0,0.4),
-      0 0 60px rgba(255,215,0,0.15);
-    transition: transform 0.5s ease, opacity 0.5s ease;
-  }
-  .ticket.entering {
-    transform: translateX(80px) scale(0.9);
-    opacity: 0;
-  }
-  .ticket.exiting {
-    transform: translateX(-80px) scale(0.9);
-    opacity: 0;
-  }
-
-  /* Under layer — the reveal content */
-  .ticket-under {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(145deg, #fff9e6 0%, #fff3cc 100%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-  }
-  .ticket-under .result-main {
-    font-size: 42px;
-    font-weight: 900;
-    color: #b8860b;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    line-height: 1.1;
-  }
-  .ticket-under .result-main.win {
-    font-size: 56px;
-    background: linear-gradient(135deg, #ff6b00, #ff9500, #ffd700);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-  .ticket-under .result-sub {
-    font-size: 15px;
-    color: #8b7355;
-    margin-top: 8px;
-    font-weight: 700;
-  }
-  .ticket-under .result-emoji {
-    font-size: 36px;
-    margin-bottom: 8px;
-  }
-
-  /* Canvas scratch layer */
-  .scratch-canvas {
-    position: absolute;
-    inset: 0;
-    border-radius: 20px;
-    cursor: pointer;
-    touch-action: none;
-  }
-
   /* ---- TICKET LABEL ---- */
   .ticket-label {
     font-size: 13px;
     color: rgba(255,255,255,0.5);
     font-weight: 700;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
     min-height: 20px;
     transition: opacity 0.3s;
   }
 
-  /* ---- CTA HINT ---- */
+  /* ---- TICKET WRAPPER ---- */
+  .ticket-wrapper {
+    position: relative;
+    margin: 0 auto 14px;
+    /* aspect ratio 515:293 */
+    width: 84%;
+    max-width: 515px;
+    min-width: 300px;
+  }
+  .ticket-wrapper::before {
+    content: '';
+    display: block;
+    padding-top: 56.89%; /* 293/515 * 100 */
+  }
+
+  .ticket {
+    position: absolute;
+    inset: 0;
+    transition: transform 0.5s ease, opacity 0.5s ease;
+  }
+  .ticket.entering {
+    transform: translateX(60px) scale(0.95);
+    opacity: 0;
+  }
+  .ticket.exiting {
+    transform: translateX(-60px) scale(0.95);
+    opacity: 0;
+  }
+
+  /* Main ticket frame background */
+  .ticket-frame {
+    position: absolute;
+    inset: 0;
+    background-image: url('flagman_scratch_ticket_assets_pack/ticket_main_frame_3x3.png');
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    filter: drop-shadow(0 6px 24px rgba(255,215,0,0.25));
+  }
+
+  /* Golden Ticket label on left stub */
+  .ticket-stub-label {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%) rotate(-90deg);
+    transform-origin: center center;
+    font-size: 9px;
+    font-weight: 900;
+    color: rgba(180,130,20,0.7);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    pointer-events: none;
+    width: 80px;
+    text-align: center;
+    left: -14px;
+  }
+
+  /* ---- 3x3 GRID ---- */
+  .cell-grid {
+    position: absolute;
+    /* Percentages from layout JSON: x=120/515, y=39/293, w=248/515, h=170/293 */
+    left: 23.3%;
+    top: 13.3%;
+    width: 48.16%;
+    height: 58.02%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 3.5%;
+  }
+
+  /* ---- INDIVIDUAL CELL ---- */
+  .cell {
+    position: relative;
+    border-radius: 8%;
+    overflow: hidden;
+    cursor: pointer;
+    touch-action: none;
+  }
+
+  /* Cell background layers */
+  .cell-bg {
+    position: absolute;
+    inset: 0;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    transition: opacity 0.3s ease;
+  }
+  .cell-bg-idle {
+    background-image: url('flagman_scratch_ticket_assets_pack/ticket_cell_idle_gold.png');
+  }
+  .cell-bg-active {
+    background-image: url('flagman_scratch_ticket_assets_pack/ticket_cell_active_gold.png');
+    opacity: 0;
+  }
+  .cell-bg-revealed {
+    background-image: url('flagman_scratch_ticket_assets_pack/ticket_cell_revealed_gold.png');
+    opacity: 0;
+  }
+
+  /* Reward image inside cell (hidden until reveal) */
+  .cell-reward {
+    position: absolute;
+    /* contentSafe approximation: inset ~12% from each edge */
+    left: 12%;
+    top: 10%;
+    width: 76%;
+    height: 80%;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 0;
+    transition: opacity 0.3s ease 0.1s;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  /* Scratch overlay canvas per cell */
+  .cell-scratch {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    border-radius: 8%;
+    touch-action: none;
+  }
+
+  /* Cell states */
+  .cell.state-revealed .cell-bg-idle { opacity: 0; }
+  .cell.state-revealed .cell-bg-revealed { opacity: 1; }
+  .cell.state-revealed .cell-reward { opacity: 1; }
+  .cell.state-revealed .cell-scratch { display: none; }
+
+  .cell.state-active .cell-bg-active { opacity: 1; }
+
+  /* ---- HINT ---- */
   .hint {
     font-size: 13px;
     color: rgba(255,255,255,0.4);
-    margin-top: 16px;
+    margin-top: 10px;
     min-height: 20px;
     transition: opacity 0.3s;
+  }
+
+  /* ---- ATTEMPT RESULT OVERLAY ---- */
+  .attempt-result {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+    z-index: 10;
+    background: rgba(0,0,0,0.5);
+    border-radius: 12px;
+  }
+  .attempt-result.visible { opacity: 1; }
+  .attempt-result-img {
+    max-width: 60%;
+    max-height: 40%;
+    margin-bottom: 8px;
+    filter: drop-shadow(0 4px 12px rgba(255,215,0,0.5));
+  }
+  .attempt-result-text {
+    font-size: 16px;
+    font-weight: 800;
+    color: #ffd700;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  }
+  .attempt-result-sub {
+    font-size: 12px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.7);
+    margin-top: 4px;
   }
 
   /* ---- FINAL SCREEN ---- */
@@ -213,22 +308,18 @@
     font-weight: 700;
     margin-bottom: 20px;
   }
-  .final-content .big-value {
-    font-size: 80px;
-    font-weight: 900;
-    background: linear-gradient(135deg, #ffd700, #ff9500, #ff6b00);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    line-height: 1;
-    margin-bottom: 8px;
+  .final-reward-img {
+    max-width: 280px;
+    width: 70%;
+    margin-bottom: 12px;
+    filter: drop-shadow(0 4px 20px rgba(255,215,0,0.5));
   }
   .final-content .deposit-text {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 800;
     color: rgba(255,255,255,0.7);
     letter-spacing: 2px;
-    margin-bottom: 36px;
+    margin-bottom: 32px;
   }
   .cta-btn {
     display: inline-block;
@@ -268,7 +359,7 @@
     opacity: 0;
   }
 
-  /* ---- SPARKLE PARTICLES on ticket ---- */
+  /* ---- SPARKLE ---- */
   .sparkle {
     position: absolute;
     width: 6px;
@@ -277,11 +368,12 @@
     border-radius: 50%;
     pointer-events: none;
     opacity: 0;
-    animation: sparkle-float 1.5s ease-out forwards;
+    animation: sparkle-float 1.2s ease-out forwards;
+    z-index: 20;
   }
   @keyframes sparkle-float {
     0% { opacity: 1; transform: translateY(0) scale(1); }
-    100% { opacity: 0; transform: translateY(-40px) scale(0); }
+    100% { opacity: 0; transform: translateY(-30px) scale(0); }
   }
 
   /* ---- INTRO OVERLAY ---- */
@@ -355,7 +447,7 @@
 <div class="container" id="mainContainer" style="opacity:0">
   <div class="header">
     <h1 id="headline">У вас 3 попытки</h1>
-    <p id="subtitle">Сотрите защитный слой и откройте результат</p>
+    <p id="subtitle">Сотрите блоки и откройте награду</p>
   </div>
 
   <div class="progress" id="progress">
@@ -368,12 +460,20 @@
 
   <div class="ticket-wrapper" id="ticketWrapper">
     <div class="ticket" id="ticket">
-      <div class="ticket-under" id="ticketUnder"></div>
-      <canvas class="scratch-canvas" id="scratchCanvas"></canvas>
+      <div class="ticket-frame">
+        <div class="ticket-stub-label">GOLDEN TICKET</div>
+      </div>
+      <div class="cell-grid" id="cellGrid"></div>
+      <!-- Attempt result overlay on ticket -->
+      <div class="attempt-result" id="attemptResult">
+        <img class="attempt-result-img" id="attemptResultImg" src="" alt="">
+        <div class="attempt-result-text" id="attemptResultText"></div>
+        <div class="attempt-result-sub" id="attemptResultSub"></div>
+      </div>
     </div>
   </div>
 
-  <div class="hint" id="hint">👆 Проведите пальцем по билету</div>
+  <div class="hint" id="hint">👆 Сотрите ячейки на билете</div>
 </div>
 
 <!-- FINAL -->
@@ -381,8 +481,8 @@
   <div class="final-content">
     <div class="congrats">Поздравляем! 🎉</div>
     <div class="your-win">Твой выигрыш</div>
-    <div class="big-value">150%</div>
-    <div class="deposit-text">НА ПЕРВЫЙ ДЕПОЗИТ</div>
+    <img class="final-reward-img" src="flagman_scratch_ticket_assets_pack/reward_up_to_500fs_gold.png" alt="До 500 FS">
+    <div class="deposit-text">БЕСПЛАТНЫЕ ВРАЩЕНИЯ</div>
     <button class="cta-btn" id="ctaBtn">РЕГИСТРАЦИЯ</button>
   </div>
 </div>
@@ -393,46 +493,112 @@
 (function() {
   'use strict';
 
-  // ---- CONFIG ----
+  // =============================================
+  // ASSETS
+  // =============================================
+  const ASSET = {
+    cellIdle:     'flagman_scratch_ticket_assets_pack/ticket_cell_idle_gold.png',
+    cellActive:   'flagman_scratch_ticket_assets_pack/ticket_cell_active_gold.png',
+    cellRevealed: 'flagman_scratch_ticket_assets_pack/ticket_cell_revealed_gold.png',
+    scratchMetal: 'flagman_scratch_ticket_assets_pack/ticket_scratch_overlay_metal.png',
+    reward5fs:    'flagman_scratch_ticket_assets_pack/reward_5fs_gold.png',
+    reward500fs:  'flagman_scratch_ticket_assets_pack/reward_up_to_500fs_gold.png',
+  };
+
+  // =============================================
+  // REWARD LOGIC (separate from visuals)
+  // =============================================
+  // Each attempt has a 3x3 grid. Cells with reward=true show the reward badge.
+  // Positions of reward cells per attempt (indices 0-8, row-major).
+  // 3 reward cells form the "winning line" the user discovers.
   const ATTEMPTS = [
-    { main: 'Почти!', sub: 'У вас осталось 2 попытки', emoji: '😊', win: false },
-    { main: 'Ещё чуть-чуть!', sub: 'Последняя попытка', emoji: '🔥', win: false },
-    { main: '150%', sub: '', emoji: '🎉', win: true }
+    {
+      rewardImg: ASSET.reward5fs,
+      rewardCells: [0, 4, 8], // diagonal
+      resultText: '5 Free Spins!',
+      resultSub: 'У вас осталось 2 попытки',
+      isFinal: false,
+    },
+    {
+      rewardImg: ASSET.reward5fs,
+      rewardCells: [1, 4, 7], // vertical middle
+      resultText: '5 Free Spins!',
+      resultSub: 'Последняя попытка',
+      isFinal: false,
+    },
+    {
+      rewardImg: ASSET.reward500fs,
+      rewardCells: [0, 1, 2, 3, 4, 5, 6, 7, 8], // all cells are reward
+      resultText: 'До 500 Free Spins!',
+      resultSub: '',
+      isFinal: true,
+    },
   ];
-  const SCRATCH_THRESHOLD = 0.50; // 50%
-  const REVEAL_HOLD_MS = 1800;
+
+  // =============================================
+  // CONFIG
+  // =============================================
+  const CELL_SCRATCH_THRESHOLD = 0.50;
+  const CELLS_TO_AUTO_REVEAL = 3;   // after N reward cells revealed, auto-complete
+  const REVEAL_HOLD_MS = 2000;
   const TRANSITION_MS = 500;
 
-  // ---- STATE ----
+  // =============================================
+  // STATE
+  // =============================================
   let currentAttempt = 0;
-  let state = 'preload'; // states per spec
-  let isScratching = false;
-  let scratchedPixels = 0;
-  let totalPixels = 0;
-  let revealed = false;
+  let state = 'preload';
+  let cellStates = [];     // per cell: 'idle' | 'scratching' | 'revealed'
+  let cellCanvases = [];   // per cell canvas refs
+  let cellCtxs = [];       // per cell 2d contexts
+  let revealedRewardCount = 0;
+  let ticketRevealed = false;
+  let scratchOverlayImg = null;
 
-  // ---- ELEMENTS ----
+  // =============================================
+  // ELEMENTS
+  // =============================================
   const intro = document.getElementById('intro');
   const startBtn = document.getElementById('startBtn');
   const mainContainer = document.getElementById('mainContainer');
-  const headline = document.getElementById('headline');
-  const subtitle = document.getElementById('subtitle');
-  const progress = document.getElementById('progress');
+  const progressEl = document.getElementById('progress');
   const ticketLabel = document.getElementById('ticketLabel');
   const ticketWrapper = document.getElementById('ticketWrapper');
   const ticket = document.getElementById('ticket');
-  const ticketUnder = document.getElementById('ticketUnder');
-  const canvas = document.getElementById('scratchCanvas');
+  const cellGrid = document.getElementById('cellGrid');
+  const attemptResult = document.getElementById('attemptResult');
+  const attemptResultImg = document.getElementById('attemptResultImg');
+  const attemptResultText = document.getElementById('attemptResultText');
+  const attemptResultSub = document.getElementById('attemptResultSub');
   const hint = document.getElementById('hint');
   const finalScreen = document.getElementById('finalScreen');
   const confettiContainer = document.getElementById('confettiContainer');
 
-  const ctx = canvas.getContext('2d', { willReadFrequently: true });
+  // =============================================
+  // PRELOAD
+  // =============================================
+  function preloadAssets(cb) {
+    const urls = Object.values(ASSET);
+    let loaded = 0;
+    urls.forEach(url => {
+      const img = new Image();
+      img.onload = img.onerror = () => { loaded++; if (loaded >= urls.length) cb(); };
+      img.src = url;
+    });
+    // Cache scratch overlay for canvas drawing
+    scratchOverlayImg = new Image();
+    scratchOverlayImg.src = ASSET.scratchMetal;
+  }
 
-  // ---- INIT ----
+  // =============================================
+  // INIT
+  // =============================================
   function init() {
-    state = 'intro';
-    startBtn.addEventListener('click', onStart);
+    state = 'preload';
+    preloadAssets(() => {
+      state = 'intro';
+      startBtn.addEventListener('click', onStart);
+    });
   }
 
   function onStart() {
@@ -445,33 +611,32 @@
     }, 300);
   }
 
-  // ---- SETUP ATTEMPT ----
+  // =============================================
+  // SETUP ATTEMPT
+  // =============================================
   function setupAttempt(idx) {
     currentAttempt = idx;
-    revealed = false;
-    scratchedPixels = 0;
+    ticketRevealed = false;
+    revealedRewardCount = 0;
+    cellStates = Array(9).fill('idle');
+    cellCanvases = [];
+    cellCtxs = [];
     state = `ready_attempt_${idx + 1}`;
 
-    // Update progress dots
-    const dots = progress.querySelectorAll('.progress-dot');
+    // Update progress
+    const dots = progressEl.querySelectorAll('.progress-dot');
     dots.forEach((dot, i) => {
       dot.classList.remove('active', 'done');
       if (i < idx) dot.classList.add('done');
       if (i === idx) dot.classList.add('active');
     });
 
-    // Update label
     ticketLabel.textContent = `Попытка ${idx + 1} из 3`;
-    hint.textContent = '👆 Проведите пальцем по билету';
+    hint.textContent = '👆 Сотрите ячейки на билете';
     hint.style.opacity = '1';
 
-    // Set under content
-    const attempt = ATTEMPTS[idx];
-    ticketUnder.innerHTML = `
-      <div class="result-emoji">${attempt.emoji}</div>
-      <div class="result-main ${attempt.win ? 'win' : ''}">${attempt.main}</div>
-      ${attempt.sub ? `<div class="result-sub">${attempt.sub}</div>` : ''}
-    `;
+    // Hide result overlay
+    attemptResult.classList.remove('visible');
 
     // Animate ticket in
     ticket.classList.remove('exiting');
@@ -482,125 +647,141 @@
       });
     });
 
-    // Setup canvas
-    setupCanvas();
+    // Build grid
+    buildGrid(idx);
   }
 
-  // ---- CANVAS ----
-  function setupCanvas() {
-    const rect = ticketWrapper.getBoundingClientRect();
+  // =============================================
+  // BUILD 3x3 GRID
+  // =============================================
+  function buildGrid(attemptIdx) {
+    cellGrid.innerHTML = '';
+    const attempt = ATTEMPTS[attemptIdx];
+
+    for (let i = 0; i < 9; i++) {
+      const cell = document.createElement('div');
+      cell.className = 'cell';
+      cell.dataset.idx = i;
+
+      // Background layers
+      const bgIdle = document.createElement('div');
+      bgIdle.className = 'cell-bg cell-bg-idle';
+      cell.appendChild(bgIdle);
+
+      const bgActive = document.createElement('div');
+      bgActive.className = 'cell-bg cell-bg-active';
+      cell.appendChild(bgActive);
+
+      const bgRevealed = document.createElement('div');
+      bgRevealed.className = 'cell-bg cell-bg-revealed';
+      cell.appendChild(bgRevealed);
+
+      // Reward image (visible only after reveal)
+      const isReward = attempt.rewardCells.includes(i);
+      if (isReward) {
+        const rewardEl = document.createElement('div');
+        rewardEl.className = 'cell-reward';
+        rewardEl.style.backgroundImage = `url('${attempt.rewardImg}')`;
+        cell.appendChild(rewardEl);
+      }
+
+      // Scratch canvas overlay
+      const canvas = document.createElement('canvas');
+      canvas.className = 'cell-scratch';
+      cell.appendChild(canvas);
+
+      cellGrid.appendChild(cell);
+
+      // Setup canvas after DOM insertion
+      requestAnimationFrame(() => setupCellCanvas(cell, canvas, i));
+    }
+  }
+
+  // =============================================
+  // CELL CANVAS SETUP
+  // =============================================
+  function setupCellCanvas(cell, canvas, idx) {
+    const rect = cell.getBoundingClientRect();
     const dpr = window.devicePixelRatio || 1;
     canvas.width = rect.width * dpr;
     canvas.height = rect.height * dpr;
     canvas.style.width = rect.width + 'px';
     canvas.style.height = rect.height + 'px';
+
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-    // Draw gold scratch layer
-    drawGoldLayer(rect.width, rect.height);
-    totalPixels = canvas.width * canvas.height;
-
-    // Bind events
-    canvas.onpointerdown = onPointerDown;
-    canvas.onpointermove = onPointerMove;
-    canvas.onpointerup = onPointerUp;
-    canvas.onpointerleave = onPointerUp;
-  }
-
-  function drawGoldLayer(w, h) {
-    // Gold gradient base
-    const grad = ctx.createLinearGradient(0, 0, w, h);
-    grad.addColorStop(0, '#ffd700');
-    grad.addColorStop(0.3, '#ffec80');
-    grad.addColorStop(0.5, '#ffd700');
-    grad.addColorStop(0.7, '#daa520');
-    grad.addColorStop(1, '#ffd700');
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, w, h);
-
-    // Subtle sparkle dots
-    for (let i = 0; i < 30; i++) {
-      const x = Math.random() * w;
-      const y = Math.random() * h;
-      const r = Math.random() * 3 + 1;
-      ctx.beginPath();
-      ctx.arc(x, y, r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(255, 255, 255, ${Math.random() * 0.5 + 0.2})`;
-      ctx.fill();
+    // Draw scratch overlay image
+    if (scratchOverlayImg.complete) {
+      ctx.drawImage(scratchOverlayImg, 0, 0, rect.width, rect.height);
+    } else {
+      scratchOverlayImg.onload = () => {
+        ctx.drawImage(scratchOverlayImg, 0, 0, rect.width, rect.height);
+      };
     }
 
-    // Stars pattern
-    ctx.fillStyle = 'rgba(255,255,255,0.15)';
-    ctx.font = '24px sans-serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText('⭐', w * 0.2, h * 0.3);
-    ctx.fillText('⭐', w * 0.8, h * 0.3);
-    ctx.fillText('⭐', w * 0.5, h * 0.7);
+    cellCanvases[idx] = canvas;
+    cellCtxs[idx] = ctx;
 
-    // Center text
-    ctx.fillStyle = 'rgba(139, 101, 8, 0.6)';
-    ctx.font = 'bold 18px Nunito, sans-serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText('СОТРИТЕ ЗДЕСЬ', w / 2, h / 2 - 10);
-
-    ctx.font = '13px Nunito, sans-serif';
-    ctx.fillStyle = 'rgba(139, 101, 8, 0.4)';
-    ctx.fillText('проведите пальцем', w / 2, h / 2 + 14);
+    // Pointer events
+    let isDown = false;
+    canvas.addEventListener('pointerdown', (e) => {
+      if (ticketRevealed || cellStates[idx] === 'revealed') return;
+      e.preventDefault();
+      canvas.setPointerCapture(e.pointerId);
+      isDown = true;
+      cellStates[idx] = 'scratching';
+      state = `scratching_${currentAttempt + 1}`;
+      hint.style.opacity = '0';
+      scratchCell(idx, e);
+    });
+    canvas.addEventListener('pointermove', (e) => {
+      if (!isDown || ticketRevealed || cellStates[idx] === 'revealed') return;
+      e.preventDefault();
+      scratchCell(idx, e);
+    });
+    canvas.addEventListener('pointerup', () => { isDown = false; });
+    canvas.addEventListener('pointerleave', () => { isDown = false; });
   }
 
-  // ---- SCRATCH LOGIC ----
-  function getPos(e) {
+  // =============================================
+  // SCRATCH INDIVIDUAL CELL
+  // =============================================
+  function scratchCell(idx, e) {
+    const canvas = cellCanvases[idx];
+    const ctx = cellCtxs[idx];
+    if (!canvas || !ctx) return;
+
     const rect = canvas.getBoundingClientRect();
-    return {
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top
-    };
-  }
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const radius = Math.max(rect.width, rect.height) * 0.22;
 
-  function onPointerDown(e) {
-    if (revealed) return;
-    e.preventDefault();
-    canvas.setPointerCapture(e.pointerId);
-    isScratching = true;
-    state = `scratching_${currentAttempt + 1}`;
-    hint.style.opacity = '0';
-    scratch(getPos(e));
-  }
-
-  function onPointerMove(e) {
-    if (!isScratching || revealed) return;
-    e.preventDefault();
-    scratch(getPos(e));
-  }
-
-  function onPointerUp(e) {
-    if (!isScratching) return;
-    isScratching = false;
-  }
-
-  function scratch(pos) {
-    const radius = 28;
     ctx.globalCompositeOperation = 'destination-out';
     ctx.beginPath();
-    ctx.arc(pos.x, pos.y, radius, 0, Math.PI * 2);
+    ctx.arc(x, y, radius, 0, Math.PI * 2);
     ctx.fill();
     ctx.globalCompositeOperation = 'source-over';
 
-    // Spawn sparkle particle
-    if (Math.random() > 0.6) spawnSparkle(pos);
+    // Sparkle
+    if (Math.random() > 0.7) {
+      spawnSparkle(e.clientX, e.clientY);
+    }
 
-    checkProgress();
+    checkCellProgress(idx);
   }
 
-  function checkProgress() {
-    if (revealed) return;
-    // Sample pixels to estimate scratch progress
-    const dpr = window.devicePixelRatio || 1;
+  // =============================================
+  // CHECK CELL SCRATCH PROGRESS
+  // =============================================
+  function checkCellProgress(idx) {
+    if (cellStates[idx] === 'revealed' || ticketRevealed) return;
+
+    const canvas = cellCanvases[idx];
+    const ctx = cellCtxs[idx];
     const w = canvas.width;
     const h = canvas.height;
-    const sampleSize = 40;
+    const sampleSize = 20;
     let transparent = 0;
     const total = sampleSize * sampleSize;
 
@@ -613,78 +794,96 @@
       for (let j = 0; j < sampleSize; j++) {
         const px = i * stepX;
         const py = j * stepY;
-        const idx = (py * w + px) * 4;
-        if (data[idx + 3] < 128) transparent++;
+        const di = (py * w + px) * 4;
+        if (data[di + 3] < 128) transparent++;
       }
     }
 
-    const ratio = transparent / total;
-    if (ratio >= SCRATCH_THRESHOLD) {
-      revealResult();
+    if (transparent / total >= CELL_SCRATCH_THRESHOLD) {
+      revealCell(idx);
     }
   }
 
-  // ---- REVEAL ----
-  function revealResult() {
-    if (revealed) return;
-    revealed = true;
-    isScratching = false;
+  // =============================================
+  // REVEAL SINGLE CELL
+  // =============================================
+  function revealCell(idx) {
+    if (cellStates[idx] === 'revealed') return;
+    cellStates[idx] = 'revealed';
+
+    const cell = cellGrid.children[idx];
+    cell.classList.add('state-revealed');
+
+    // Check if this was a reward cell
+    const attempt = ATTEMPTS[currentAttempt];
+    if (attempt.rewardCells.includes(idx)) {
+      revealedRewardCount++;
+    }
+
+    // Check if enough reward cells opened to auto-complete
+    const neededRewards = Math.min(CELLS_TO_AUTO_REVEAL, attempt.rewardCells.length);
+    if (revealedRewardCount >= neededRewards && !ticketRevealed) {
+      autoCompleteTicket();
+    }
+  }
+
+  // =============================================
+  // AUTO-COMPLETE TICKET
+  // =============================================
+  function autoCompleteTicket() {
+    if (ticketRevealed) return;
+    ticketRevealed = true;
     state = `reveal_${currentAttempt + 1}`;
 
-    // Animate clear remaining scratch layer
-    animateClear();
-  }
-
-  function animateClear() {
-    const rect = ticketWrapper.getBoundingClientRect();
-    const w = rect.width;
-    const h = rect.height;
-    let progress = 0;
-
-    function step() {
-      progress += 0.08;
-      if (progress >= 1) {
-        ctx.clearRect(0, 0, w, h);
-        canvas.style.pointerEvents = 'none';
-        onRevealComplete();
-        return;
-      }
-      // Expand clear from center
-      ctx.globalCompositeOperation = 'destination-out';
-      ctx.beginPath();
-      const cx = w / 2;
-      const cy = h / 2;
-      const maxR = Math.sqrt(cx * cx + cy * cy);
-      ctx.arc(cx, cy, maxR * progress, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.globalCompositeOperation = 'source-over';
-      requestAnimationFrame(step);
+    // Reveal all remaining cells with stagger
+    const unrevealed = [];
+    for (let i = 0; i < 9; i++) {
+      if (cellStates[i] !== 'revealed') unrevealed.push(i);
     }
-    requestAnimationFrame(step);
+
+    unrevealed.forEach((idx, order) => {
+      setTimeout(() => {
+        cellStates[idx] = 'revealed';
+        const cell = cellGrid.children[idx];
+        cell.classList.add('state-revealed');
+      }, order * 120);
+    });
+
+    // After stagger animation, show result
+    const staggerDone = unrevealed.length * 120 + 300;
+    setTimeout(() => showAttemptResult(), staggerDone);
   }
 
-  function onRevealComplete() {
+  // =============================================
+  // SHOW ATTEMPT RESULT
+  // =============================================
+  function showAttemptResult() {
     const attempt = ATTEMPTS[currentAttempt];
 
-    if (attempt.win) {
-      // Small win flash then go to final
+    attemptResultImg.src = attempt.rewardImg;
+    attemptResultText.textContent = attempt.resultText;
+    attemptResultSub.textContent = attempt.resultSub;
+    attemptResult.classList.add('visible');
+
+    if (attempt.isFinal) {
       setTimeout(() => {
         state = 'final_offer_reveal';
         showFinalScreen();
       }, REVEAL_HOLD_MS);
     } else {
-      // Hold then next attempt
       setTimeout(() => {
+        attemptResult.classList.remove('visible');
         ticket.classList.add('exiting');
         setTimeout(() => {
-          canvas.style.pointerEvents = 'auto';
           setupAttempt(currentAttempt + 1);
         }, TRANSITION_MS);
       }, REVEAL_HOLD_MS);
     }
   }
 
-  // ---- FINAL SCREEN ----
+  // =============================================
+  // FINAL SCREEN (reused from MVP)
+  // =============================================
   function showFinalScreen() {
     finalScreen.classList.add('visible');
     state = 'final_offer_hold';
@@ -695,7 +894,9 @@
     });
   }
 
-  // ---- CONFETTI ----
+  // =============================================
+  // CONFETTI (reused from MVP)
+  // =============================================
   function launchConfetti() {
     const colors = ['#ffd700', '#ff6b00', '#ff9500', '#fff', '#ff4444', '#44ff44', '#4488ff'];
     for (let i = 0; i < 60; i++) {
@@ -716,7 +917,6 @@
       confettiContainer.appendChild(el);
     }
 
-    // Add keyframes dynamically
     if (!document.getElementById('confettiStyle')) {
       const style = document.createElement('style');
       style.id = 'confettiStyle';
@@ -730,18 +930,21 @@
     }
   }
 
-  // ---- SPARKLE PARTICLES ----
-  function spawnSparkle(pos) {
+  // =============================================
+  // SPARKLE (reused from MVP)
+  // =============================================
+  function spawnSparkle(clientX, clientY) {
     const el = document.createElement('div');
     el.className = 'sparkle';
-    const rect = ticketWrapper.getBoundingClientRect();
-    el.style.left = (rect.left + pos.x + (Math.random() - 0.5) * 20) + 'px';
-    el.style.top = (rect.top + pos.y + (Math.random() - 0.5) * 20) + 'px';
+    el.style.left = (clientX + (Math.random() - 0.5) * 16) + 'px';
+    el.style.top = (clientY + (Math.random() - 0.5) * 16) + 'px';
     document.body.appendChild(el);
-    setTimeout(() => el.remove(), 1500);
+    setTimeout(() => el.remove(), 1200);
   }
 
-  // ---- GO ----
+  // =============================================
+  // GO
+  // =============================================
   init();
 })();
 </script>
